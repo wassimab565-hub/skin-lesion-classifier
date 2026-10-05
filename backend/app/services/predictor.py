@@ -12,7 +12,7 @@ def predict(img: np.ndarray) -> PredictionResponse:
     classes = get_classes()
 
     start = time.perf_counter()
-    probs = model.predict(img[None], verbose=0)[0]
+    probs = model(img[None], training=False).numpy()[0]
     elapsed = (time.perf_counter() - start) * 1000
 
     ranked = sorted(

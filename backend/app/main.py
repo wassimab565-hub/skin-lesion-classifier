@@ -1,16 +1,18 @@
 from contextlib import asynccontextmanager
 
+import numpy as np
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import router
-from app.core.config import CORS_ORIGINS
+from app.core.config import CORS_ORIGINS, IMG_SIZE
 from app.services.model_loader import get_model
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    get_model()
+    model = get_model()
+    model(np.zeros((1, IMG_SIZE, IMG_SIZE, 3), dtype="float32"), training=False)
     yield
 
 

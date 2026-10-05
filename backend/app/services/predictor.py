@@ -4,6 +4,7 @@ import numpy as np
 
 from app.core.config import CLASS_NAMES, IMG_SIZE
 from app.schemas.prediction import ClassProbability, PredictionResponse
+from app.services.gradcam_service import gradcam_overlay
 from app.services.model_loader import get_classes, get_model
 
 
@@ -30,6 +31,7 @@ def predict(img: np.ndarray) -> PredictionResponse:
         predicted_name=top.name,
         confidence=top.probability,
         probabilities=ranked,
+        gradcam_image=gradcam_overlay(img, classes.index(top.label)),
         model_name="MobileNetV2 (Fine-Tuning)",
         input_size=f"{IMG_SIZE} × {IMG_SIZE} px",
         inference_time_ms=round(elapsed, 1),

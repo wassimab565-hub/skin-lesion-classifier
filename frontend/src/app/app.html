@@ -1,0 +1,113 @@
+<header class="header">
+  <div class="header-inner">
+    <h1>Skin Lesion Classifier</h1>
+    <p>Classification des lésions cutanées à partir d'images dermoscopiques</p>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card">
+    <h2>1. Charger une image</h2>
+
+    <div class="upload-grid">
+      <div
+        class="dropzone"
+        [class.dragging]="dragging()"
+        (drop)="onDrop($event)"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()"
+      >
+        <p class="strong">Glissez-déposez votre image ici</p>
+        <p class="muted">ou</p>
+        <label class="btn">
+          Choisir une image
+          <input type="file" accept="image/jpeg,image/png" (change)="onFileInput($event)" hidden />
+        </label>
+        <p class="hint">Formats acceptés : JPG, PNG · Taille max : 10 Mo</p>
+      </div>
+
+      <div class="preview">
+        <div class="preview-head">
+          <span class="strong">Aperçu de l'image</span>
+          @if (file()) {
+            <span class="badge">Image chargée</span>
+          }
+        </div>
+
+        @if (previewUrl(); as url) {
+          <img [src]="url" alt="Aperçu" />
+          <div class="preview-foot">
+            <span class="muted">{{ file()?.name }}</span>
+            <button class="link-danger" (click)="reset()">Supprimer</button>
+          </div>
+        } @else {
+          <div class="placeholder">Aucune image sélectionnée</div>
+        }
+      </div>
+    </div>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button class="btn btn-primary" [disabled]="!file() || loading()" (click)="analyze()">
+      {{ loading() ? 'Analyse en cours…' : "Analyser l'image" }}
+    </button>
+  </section>
+
+  @if (result(); as r) {
+    <section class="card">
+      <h2>2. Résultat de l'analyse</h2>
+
+      <div class="result-grid">
+        <div class="result-main">
+          <div class="predicted">
+            <span class="muted">Type de lésion prédit</span>
+            <strong class="predicted-name">{{ r.predicted_name }}</strong>
+            <span class="muted">({{ r.predicted_class }})</span>
+            <span class="muted">Probabilité prédite</span>
+            <strong class="predicted-prob">{{ percent(r.confidence) }}</strong>
+          </div>
+          <div class="notice">
+            Ce résultat est fourni à titre indicatif uniquement et ne remplace pas un avis médical professionnel.
+          </div>
+        </div>
+
+        <div class="result-probs">
+          <h3>Probabilités par classe</h3>
+          @for (p of r.probabilities; track p.label) {
+            <div class="bar-row">
+              <span class="bar-label">{{ p.name }}</span>
+              <div class="bar"><div class="bar-fill" [style.width.%]="p.probability * 100"></div></div>
+              <span class="bar-value">{{ percent(p.probability) }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <h3>Zones d'attention du modèle (Grad-CAM)</h3>
+      <div class="cam-grid">
+        <figure>
+          <img [src]="previewUrl()" alt="Image originale" />
+          <figcaption>Image originale</figcaption>
+        </figure>
+        <figure>
+          <img [src]="r.gradcam_image" alt="Grad-CAM" />
+          <figcaption>Grad-CAM</figcaption>
+        </figure>
+      </div>
+
+      <h3>Détails supplémentaires</h3>
+      <div class="details">
+        <div><span class="muted">Modèle</span><strong>{{ r.model_name }}</strong></div>
+        <div><span class="muted">Image d'entrée</span><strong>{{ r.input_size }}</strong></div>
+        <div><span class="muted">Temps d'analyse</span><strong>{{ seconds(r.inference_time_ms) }}</strong></div>
+        <div><span class="muted">Date</span><strong>{{ analyzedAt() }}</strong></div>
+      </div>
+    </section>
+  }
+</main>
+
+<footer class="footer">
+  Projet académique et expérimental. Ce n'est pas un dispositif médical.
+</footer>

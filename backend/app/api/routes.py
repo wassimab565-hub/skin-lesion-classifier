@@ -16,15 +16,15 @@ def health():
 @router.post("/predict", response_model=PredictionResponse)
 async def predict(file: UploadFile = File(...)):
     if file.content_type not in ALLOWED_TYPES:
-        raise HTTPException(415, "Format non supporté (JPG ou PNG)")
+        raise HTTPException(415, "Unsupported format (JPG or PNG only)")
 
     data = await file.read()
     if len(data) > MAX_UPLOAD_MB * 1024 * 1024:
-        raise HTTPException(413, "Image trop volumineuse")
+        raise HTTPException(413, "Image too large")
 
     try:
         img = load_image(data)
     except Exception:
-        raise HTTPException(400, "Image illisible")
+        raise HTTPException(400, "Unreadable image")
 
     return predictor.predict(img)

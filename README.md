@@ -4,7 +4,9 @@ End-to-end deep learning project that classifies dermoscopic images into 7 skin 
 
 > **Disclaimer:** this is an academic and experimental project. It is not a medical device, and its predictions must not be used for diagnosis or to replace the advice of a healthcare professional.
 
-![Upload screen](docs/screenshots/app-upload.png)
+<p align="center">
+  <img src="docs/screenshots/app-nv.png" alt="Web interface" width="460">
+</p>
 
 ## Highlights
 
@@ -16,9 +18,19 @@ End-to-end deep learning project that classifies dermoscopic images into 7 skin 
 
 ## Demo
 
-| Prediction and class probabilities | Grad-CAM and details |
+Example predictions from the web interface, one image per class taken from the HAM10000 dataset. These images were picked for the demo and may come from the training split, so they illustrate the interface and are **not** a performance measure (see [Results](#results) for that).
+
+| Melanocytic nevus (nv) | Vascular lesion (vasc) | Melanoma (mel) |
+|---|---|---|
+| <img src="docs/screenshots/app-nv.png" width="260"> | <img src="docs/screenshots/app-vasc.png" width="260"> | <img src="docs/screenshots/app-mel.png" width="260"> |
+| Predicted **nv**, 95.7% | Predicted **vasc**, 98.4% | Predicted **mel**, 50.4% |
+
+Two failure cases are shown on purpose: the model is not reliable on every class, and it can be confidently wrong.
+
+| Benign keratosis (bkl) | Basal cell carcinoma (bcc) |
 |---|---|
-| ![Result](docs/screenshots/app-result.png) | ![Details](docs/screenshots/app-details.png) |
+| <img src="docs/screenshots/app-bkl.png" width="260"> | <img src="docs/screenshots/app-bcc.png" width="260"> |
+| Predicted **mel**, 40.9% (bkl got 22.7%) | Predicted **mel**, 84.0% (bcc got 5.7%) |
 
 ## Dataset
 
@@ -73,7 +85,9 @@ Final model on the held-out test set (992 images): **accuracy 77.6%, macro F1 0.
 | nv | 0.908 | 0.906 | 0.907 | 651 |
 | vasc | 0.632 | 0.800 | 0.706 | 15 |
 
-![Confusion matrix](docs/screenshots/confusion-matrix-test.png)
+<p align="center">
+  <img src="docs/screenshots/confusion-matrix-test.png" alt="Confusion matrix on the test set" width="480">
+</p>
 
 ### Explainability
 
@@ -87,7 +101,7 @@ Grad-CAM heatmaps (computed on the last convolutional block) highlight the regio
 - Rare classes (`df`, `vasc`, `akiec`) have very few test images, so their metrics are only indicative.
 - A single dataset and a single split were used. There is no external validation, and results may not transfer to other devices or populations.
 - Images are downscaled to 128x128, which also makes Grad-CAM heatmaps coarse (4x4 feature map).
-- The model can be confidently wrong, so the confidence score is not a reliability guarantee.
+- The model can be confidently wrong (see the `bcc` example above), so the confidence score is not a reliability guarantee.
 
 ## Architecture
 
@@ -155,7 +169,7 @@ npm install
 npm start
 ```
 
-Open `http://localhost:4200`, upload a dermoscopic image and click **Analyser l'image**.
+Open `http://localhost:4200`, upload a dermoscopic image and click **Analyze image**.
 
 ## Tech stack
 

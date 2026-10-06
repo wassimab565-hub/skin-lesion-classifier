@@ -45,11 +45,11 @@ export class App {
 
   private setFile(f: File) {
     if (!this.allowed.includes(f.type)) {
-      this.error.set('Format non supporté (JPG ou PNG).');
+      this.error.set('Unsupported format (JPG or PNG only).');
       return;
     }
     if (f.size > this.maxSize) {
-      this.error.set('Image trop volumineuse (10 Mo max).');
+      this.error.set('Image too large (10 MB max).');
       return;
     }
     this.reset();
@@ -76,11 +76,11 @@ export class App {
     this.service.predict(f).subscribe({
       next: (r) => {
         this.result.set(r);
-        this.analyzedAt.set(new Date().toLocaleString('fr-FR'));
+        this.analyzedAt.set(new Date().toLocaleString('en-GB'));
         this.loading.set(false);
       },
       error: () => {
-        this.error.set("Impossible de contacter l'API. Vérifiez que le backend est lancé.");
+        this.error.set('Unable to reach the API. Make sure the backend is running.');
         this.loading.set(false);
       },
     });
@@ -91,6 +91,6 @@ export class App {
   }
 
   seconds(ms: number): string {
-    return (ms / 1000).toFixed(2) + ' sec';
+    return (ms / 1000).toFixed(2) + ' s';
   }
 }
